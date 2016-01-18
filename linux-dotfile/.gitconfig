@@ -1,0 +1,21 @@
+[user]
+	name = cowlog
+	email = cowlog.li@gmail.com
+[color]
+    ui = true
+[push]
+    default = matching
+[core]
+	editor = vim
+[github]
+    user = fewtime
+[alias]
+    hist = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --
+    ci = commit
+    co = checkout
+    st = status
+    br = branch
+    unstage = reset HEAD --
+    type = cat-file -t
+    dump = cat-file -p
+
