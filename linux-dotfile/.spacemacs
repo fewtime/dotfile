@@ -35,6 +35,8 @@ values."
      eyebrowse ;; Windows manager
      gtags
      tmux
+     (ycmd :variables
+           ycmd-server-command '("python" "/home/cowlog/.vim/bundle/YouCompleteMe/third_party/ycmd/ycmd"))
      search-engine
      ;; smex
      spell-checking
@@ -43,11 +45,17 @@ values."
      vagrant
      ;; Language
      (c-c++ :variables
+            c-c++-default-mode-for-headers 'c++-mode
             c-c++-enable-clang-support t)
      emacs-lisp
      html
      ipython-notebook
+     java
      javascript
+     (latex :variables
+            latex-build-command "xelatex"
+            latex-enable-auto-fill t
+            latex-enable-folding t)
      markdown
      org
      python
@@ -63,7 +71,8 @@ values."
      version-control
      ;; Chinese
      (chinese :variables
-              chinese-enable-youdao-dict t)
+              chinese-enable-youdao-dict t
+              pyim-default-pinyin-scheme 'pyim-shuangpin)
      ;; Hexo
      hexo-org
      ;; IRC
@@ -111,8 +120,8 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(solarized-dark
-                         spacemacs-dark
+   dotspacemacs-themes '(spacemacs-dark
+                         solarized-dark
                          spacemacs-light
                          solarized-light
                          leuven
@@ -190,11 +199,11 @@ values."
    ;; A value from the range (0..100), in increasing opacity, which describes
    ;; the transparency level of a frame when it's active or selected.
    ;; Transparency can be toggled through `toggle-transparency'. (default 90)
-   dotspacemacs-active-transparency 90
+   dotspacemacs-active-transparency 70
    ;; A value from the range (0..100), in increasing opacity, which describes
    ;; the transparency level of a frame when it's inactive or deselected.
    ;; Transparency can be toggled through `toggle-transparency'. (default 90)
-   dotspacemacs-inactive-transparency 90
+   dotspacemacs-inactive-transparency 70
    ;; If non nil unicode symbols are displayed in the mode line. (default t)
    dotspacemacs-mode-line-unicode-symbols t
    ;; If non nil smooth scrolling (native-scrolling) is enabled. Smooth
@@ -232,6 +241,20 @@ user code."
  This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
   (spacemacs//set-monospaced-font "Source Code Pro" "Source Han Sans" 14 14)
+
+  ;; display time
+  (display-time)
+
+  ;; neotree
+  (global-set-key [f8] 'neotree-toggle)
+
+  ;; indent
+  (setq default-tab-width 4)
+  (setq tab-width 4)
+  ;; javascript indent
+  (setq-default js2-basic-offset 2)
+  (setq-default js-indent-level 2)
+
   ;; Line number
   (global-linum-mode t)
   ;; Make linum relative by default
@@ -240,7 +263,34 @@ layers configuration. You are free to put any user code."
 
   ;; 80 columns
   (turn-on-fci-mode)
-)
+
+  (defun linux-c-mode()
+    (define-key c-mode-map [return] 'newline-and-indent)
+    (interactive)
+    (c-set-style "K&R")
+    (c-toggle-hungry-state)
+    (setq c-basic-offset 4)
+    (setq c++-basic-offset 4)
+    (imenu-add-menubar-index)
+    (which-function-mode)
+    )
+
+  ;; clang-format
+  ;; Bind clang-format-region to C-M-tab in all modes:
+  (global-set-key [C-M-tab] 'clang-format-region)
+  ;; Bind clang-format-buffer to tab on the c++-mode only:
+  (add-hook 'c++-mode-hook 'clang-format-bindings)
+  (defun clang-format-bindings ()
+    (define-key c++-mode-map [tab] 'clang-format-buffer))
+
+  ;; latex previewing
+  (add-hook 'doc-view-mode-hook 'auto-revert-mode)
+
+  ;; java
+  (setq eclim-eclipse-dirs "/usr/lib/eclipse/"
+        eclim-executable "/usr/lib/eclipse/plugins/org.eclim_2.5.0/bin/eclim"
+        )
+  )
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -251,7 +301,7 @@ layers configuration. You are free to put any user code."
  ;; If there is more than one, they won't work right.
  '(pyim-dicts
    (quote
-    ((:name "BigDict-01" :file "/home/cowlog/.emacs.d/.cache/pyim-bigdict.pyim" :coding utf-8-unix :dict-type pinyin-dict)))))
+    ((:name "BigDict-01" :file "/home/cowlog/.emacs.d/.cache/pyim-bigdict.pyim.gz" :coding utf-8-unix :dict-type pinyin-dict)))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

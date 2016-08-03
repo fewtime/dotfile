@@ -79,6 +79,7 @@ source $ZSH/oh-my-zsh.sh
 # else
 #   export EDITOR='mvim'
 # fi
+export EDITOR='vim'
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -94,9 +95,9 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-# alias ls="ls --color=auto"
+alias ls="ls --color=auto"
 # alias steam="LD_PRELOAD=/usr/lib/libasound.so.2 primusrun steam > /dev/null 2>&1 &"
-alias java-idea="/opt/idea-IU/bin/idea.sh > /dev/null 2>&1 &"
+# alias javaide="/opt/intellij-idea/bin/idea.sh > /dev/null 2>&1 &"
 
 # Percol
 [ $(uname -s | grep -c CYGWIN) -eq 1 ] && OS_NAME="CYGWIN" || OS_NAME=`uname -s`
@@ -126,7 +127,7 @@ function baseff()
     filename=${filename##*./} # remove  ".../" from the beginning
     # Only the filename without path is needed
     # filename should be reasonable
-    local cli=`find . -not -iwholename '*/vendor/*' -not -iwholename '*/bower_components/*' -not -iwholename '*/node_modules/*' -not -iwholename '*/target/*' -not -iwholename '*.svn*' -not -iwholename '*.git*' -not -iwholename '*.sass-cache*' -not -iwholename '*.hg*' -type f -path '*'${filename}'*' -print | ~/bin/percol.py`
+    local cli=`find . -not -iwholename '*/vendor/*' -not -iwholename '*/bower_components/*' -not -iwholename '*/node_modules/*' -not -iwholename '*/target/*' -not -iwholename '*.svn*' -not -iwholename '*.git*' -not -iwholename '*.sass-cache*' -not -iwholename '*.hg*' -type f -path '*'${filename}'*' -print | ~/.bin/percol.py`
     # convert relative path to full path
     echo $(cd $(dirname $cli); pwd)/$(basename $cli)
 }
@@ -151,14 +152,14 @@ function cf()
 function h () {
     # reverse history, pick up one line, remove new line characters and put it into clipboard
     if [ -z "$1" ]; then
-        history | sed '1!G;h;$!d' | ~/bin/percol.py | sed -n 's/^ *[0-9][0-9]* *\(.*\)$/\1/p'| tr -d '\n' | pclip
+        history | sed '1!G;h;$!d' | ~/.bin/percol.py | sed -n 's/^ *[0-9][0-9]* *\(.*\)$/\1/p'| tr -d '\n' | pclip
     else
-        history | grep "$1" | sed '1!G;h;$!d' | ~/bin/percol.py | sed -n 's/^ *[0-9][0-9]* *\(.*\)$/\1/p'| tr -d '\n' | pclip
+        history | grep "$1" | sed '1!G;h;$!d' | ~/.bin/percol.py | sed -n 's/^ *[0-9][0-9]* *\(.*\)$/\1/p'| tr -d '\n' | pclip
     fi
 }
 
 function glsf () {
-    local str=`git --no-pager log --oneline --stat $* |  ~/bin/percol.py`
+    local str=`git --no-pager log --oneline --stat $* |  ~/.bin/percol.py`
     if [[ $str =~ ^[[:space:]]*([a-z0-9A-Z_.\/-]*).*$ ]]; then
         echo -n ${BASH_REMATCH[1]} |pclip;
         echo ${BASH_REMATCH[1]}
@@ -195,10 +196,10 @@ export TMUX_POWERLINE_SEG_WEATHER_LOCATION="2161842"
 # fi
 
 # TMUX
-if which tmux 2>&1 >/dev/null; then
-    #if not inside a tmux session, and if no session is started, start a new session
-    test -z "$TMUX" && (tmux -2 attach || tmux -2 new-session)
-fi
+# if which tmux 2>&1 >/dev/null; then
+#     #if not inside a tmux session, and if no session is started, start a new session
+#     test -z "$TMUX" && (tmux -2 attach || tmux -2 new-session)
+# fi
 
 export TERM=xterm-256color
 
@@ -212,3 +213,9 @@ function gi() { curl -L -s https://www.gitignore.io/api/$@ ;}
 
 # Algorithm 4
 export PATH=$PATH:$HOME/algs4/bin
+
+# Byobu
+_byobu_sourced=1 . /usr/bin/byobu-launch
+
+# tmuxinator
+source ~/.bin/tmuxinator.zsh
